@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ihooyah.roadgis.mapper.RoadPointPgrMapper">
+
+    <resultMap type="com.ihooyah.roadgis.entity.RoadPointPgr" id="RoadPointPgrResult">
+        <result property="gid" column="gid"/>
+        <result property="geom" column="geom"/>
+    </resultMap>
+
+    <resultMap type="com.ihooyah.roadgis.entity.RoadLinePgr" id="RoadLinePgrResult">
+        <result property="gid" column="gid"/>
+        <result property="geom" column="geom"/>
+    </resultMap>
+
+    <select id="selectRoadPointPgrs" resultMap="RoadPointPgrResult">
+    select t.gid,st_asgeojson(st_makeline(t.geom ORDER BY t.id)) as geom
+				from hooya_gis_point t where
+									 ST_DWithin(ST_GeomFromText('POINT(${lat} ${lng})',4326)::geography,
+												t.geom::geography,#{distance}
+											   )
+											   GROUP BY t.gid
+    </select>
+
+
+    <select id="selectRoadLinePgrs" resultMap="RoadPointPgrResult">
+    SELECT
+    target as gid,st_asgeojson(rc.geom) as geom
+FROM
+ pgr_drivingDistance ('SELECT gid as id, source, target, length as cost FROM hooya_gis_line',#{pointId},#{distance},false)  dd,
+    hooya_gis_line rc
+WHERE rc.gid = dd.edge
+    </select>
+
+
+    <select id="selectNearbyRoadPoint" resultType="Integer">
+        SELECT id::integer FROM hooya_gis_line_vertices_pgr
+        ORDER BY the_geom <![CDATA[ <-> ]]> ST_GeometryFromText('POINT(${lat} ${lng})',4326) LIMIT 1
+    </select>
+
+
+    <select id="selectSTIntersects" resultType="String">
+           SELECT ST_Intersects (
+    ( SELECT t.geom FROM hooya_gis_line t WHERE t.gid = #{line} ) :: geometry,
+    ( SELECT t.geom FROM hooya_gis_line t WHERE t.gid = #{line2} ) :: geometry
+    )
+    </select>
+
+    <select id="selectTotal" resultType="Integer">
+       SELECT count(1) FROM hooya_gis_line t
+    </select>
+
+    <select id="getShapeLenght" resultType="double" parameterType="map">
+        SELECT
+         CASE
+            WHEN SUM( T.shape_leng ) IS NULL
+            THEN 0
+            ELSE SUM ( T.shape_leng )
+        END
+        FROM
+        hooya_gis_line T
+        WHERE 1 = 1 <if test="enticlassi !='' and enticlassi !=null"> and t.enticlassi = #{enticlassi}</if>
+    </select>
+
+    <select id="selectGisLineList" resultType="map" parameterType="map">
+       SELECT t.gid,
+                t.objectid,
+                t.enticlassi,
+                t.entiid,
+                t.name,
+                t.material,
+                t.techlevel,
+                t.roadlevel,
+                t.shape_leng,
+                t.geom
+       FROM hooya_gis_line t
+        where 1=1
+        <if test="enticlassi !='' and enticlassi !=null"> and t.enticlassi = #{enticlassi}</if>
+    </select>
+
+
+    <select id="selectSTasgeojson" resultType="string" parameterType="map">
+      SELECT
+    st_asgeojson(ST_Intersection (
+        ( SELECT t.geom FROM hooya_gis_line t WHERE t.gid = #{line} ) :: geometry,
+        ( SELECT t.geom FROM hooya_gis_line t WHERE t.gid = #{line2} ) :: geometry
+    ))
+    </select>
+
+    <select id="selectSTIntersection" resultType="string" parameterType="map">
+      SELECT
+    st_asgeojson(ST_Intersection (
+        ( SELECT t.geom FROM hooya_gis_line t WHERE t.gid = #{gid} ) :: geometry,
+        ${geometry} :: geometry
+    ))
+    </select>
+
+
+
+    <select id="selectIntersectionPointGroupByLngLat" resultType="com.ihooyah.roadgis.entity.IntersectionPoint" parameterType="com.ihooyah.roadgis.entity.IntersectionPoint">
+     select t.lng,t.lat from  intersection_point t
+      where 1=1
+      <if test="enticlassi !='' and enticlassi !=null"> and enticlassi = #{enticlassi}</if>
+      GROUP BY t.lng,t.lat
+    </select>
+
+    <select id="selectCountByLntLat" resultType="int" parameterType="com.ihooyah.roadgis.entity.IntersectionPoint">
+    select count(1) from intersection_point t where t.lng=#{lng} and t.lat=#{lat}
+    </select>
+
+
+    <select id="selectSTastext" resultType="string" parameterType="map">
+     SELECT st_astext(t.geom) FROM hooya_gis_line t WHERE t.gid = #{gid}
+    </select>
+
+    <select id="STLineInterpolatePoints" resultType="String" parameterType="map">
+      SELECT st_asgeojson(ST_LineInterpolatePoints(${linestring},${fraction}))
+    </select>
+
+    <select id="selectIntersectGeography" resultType="map" parameterType="com.ihooyah.roadgis.dto.RoadScopeDto">
+      SELECT t.gid,st_asgeojson (t.geom) as geom,t.shape_leng  FROM hooya_gis_line t WHERE
+	ST_DWithin (ST_GeomFromText ( 'POINT(${lng}  ${lat})', 4326 ) :: geography, T.geom :: geography,#{distance},false )
+      GROUP BY t.gid;
+    </select>
+
+    <select id="STDistance" resultType="float" parameterType="map">
+      select
+        ST_Distance(ST_SetSRID(ST_MakePoint(${lng} ,${lat}),4326)::geography,ST_SetSRID(ST_MakePoint(${lng2},${lat2}),4326)::geography)
+    </select>
+
+</mapper>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>秦淮拟建规划</title>
+</head>
+<script src="../static/jq/jquery-3.4.1.js" th:src="@{/jq/jquery-3.4.1.js}"></script>
+<style>
+    table,table tr th ,table tr td{
+        border: 1px solid #0094ff;
+    }
+    table {
+        width:750px;
+        min-height: 25px;
+        line-height: 25px;
+        text-align: center;
+        border-collapse: collapse;
+
+    }
+
+</style>
+<body>
+<div>
+    <h4>路段仿真计算</h4>
+    <table>
+                <tr>
+                    <td>序号</td>
+                    <td>道路</td>
+                    <td>公里数(单位：km)</td>
+                    <td>米/间隔</td>
+                    <td>摄像头个数</td>
+                    <td>规划总数</td>
+                </tr>
+        <tr>
+            <td>1</td>
+            <td>省道</td>
+            <td><a th:text="${message.sd}"></a></td>
+            <td><input id="sd" th:type="text" style="text-align: center"></td>
+            <td><input id="sd_text" th:type="text" style="text-align: center"></td>
+            <td id="sd_val"></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>国道</td>
+            <td><a th:text="${message.gd}"></a></td>
+            <td><input id="gd" th:type="text" style="text-align: center"></td>
+            <td><input id="gd_text" th:type="text" style="text-align: center"></td>
+            <td id="gd_val"></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>城市主干道</td>
+            <td><a th:text="${message.zgd}"></a></td>
+            <td><input id="zgd" th:type="text" style="text-align: center"></td>
+            <td><input id="zgd_text" th:type="text" style="text-align: center"></td>
+            <td id="zgd_val"></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>城市次干道</td>
+            <td><a th:text="${message.cgd}"></a></td>
+            <td><input id="cgd" th:type="text" style="text-align: center"></td>
+            <td><input id="cgd_text" th:type="text" style="text-align: center"></td>
+            <td id="cgd_val"></td>
+        </tr>
+          <tr>
+              <td>5</td>
+              <td>高速公路</td>
+              <td><a th:text="${message.gsgl}"></a></td>
+              <td><input id="gsgl" th:type="text" style="text-align: center"></td>
+              <td><input id="gsgl_text" th:type="text" style="text-align: center"></td>
+              <td id="gsgl_val"></td>
+          </tr>
+          <tr>
+              <td>6</td>
+              <td>县道</td>
+              <td><a th:text="${message.xd}"></a></td>
+              <td><input id="xd" th:type="text" style="text-align: center"></td>
+              <td><input id="xd_text" th:type="text" style="text-align: center"></td>
+              <td id="xd_val"></td>
+          </tr>
+          <tr>
+              <td>7</td>
+              <td>乡道</td>
+              <td><a th:text="${message.xcd}"></a></td>
+              <td><input id="xcd" th:type="text" style="text-align: center"></td>
+              <td><input id="xcd_text" th:type="text" style="text-align: center"></td>
+              <td id="xcd_val"></td>
+          </tr>
+          <tr>
+              <td>8</td>
+              <td>快速路</td>
+              <td><a th:text="${message.ksl}"></a></td>
+              <td><input id="ksl" th:type="text" style="text-align: center"></td>
+              <td><input id="ksl_text" th:type="text" style="text-align: center"></td>
+              <td id="ksl_val"></td>
+          </tr>
+          <tr>
+              <td>9</td>
+              <td>高架路</td>
+              <td><a th:text="${message.gjl}"></a></td>
+              <td><input id="gjl" th:type="text" style="text-align: center"></td>
+              <td><input id="gjl_text" th:type="text" style="text-align: center"></td>
+              <td id="gjl_val"></td>
+          </tr>
+          <tr>
+              <td>10</td>
+              <td>支路</td>
+              <td><a th:text="${message.zl}"></a></td>
+              <td><input id="zl" th:type="text" style="text-align: center"></td>
+              <td><input id="zl_text" th:type="text" style="text-align: center"></td>
+              <td id="zl_val"></td>
+          </tr>
+          <tr>
+              <td>11</td>
+              <td>内部道路</td>
+              <td><a th:text="${message.nbdl}"></a></td>
+              <td><input id="nbdl" th:type="text" style="text-align: center"></td>
+              <td><input id="nbdl_text" th:type="text" style="text-align: center"></td>
+              <td id="nbdl_val"></td>
+          </tr>
+          <tr>
+              <td>12</td>
+              <td>机耕路</td>
+              <td><a th:text="${message.jgl}"></a></td>
+              <td><input id="jgl" th:type="text" style="text-align: center"></td>
+              <td><input id="jgl_text" th:type="text" style="text-align: center"></td>
+              <td id="jgl_val"></td>
+          </tr>
+          <tr>
+              <td>13</td>
+              <td>乡村路</td>
+              <td><a th:text="${message.xcl}"></a></td>
+              <td><input id="xcl" th:type="text" style="text-align: center"></td>
+              <td><input id="xcl_text" th:type="text" style="text-align: center"></td>
+              <td id="xcl_val"></td>
+          </tr>
+          <tr>
+              <td>14</td>
+              <td>小路</td>
+              <td><a th:text="${message.xl}"></a></td>
+              <td><input id="xl" th:type="text" style="text-align: center"></td>
+              <td><input id="xl_text" th:type="text" style="text-align: center"></td>
+              <td id="xl_val"></td>
+          </tr>
+        <tr>
+            <td>总计</td>
+            <td>全部</td>
+            <td><a th:text="${message.km}"></a></td>
+            <td></td>
+            <td></td>
+            <td id="line_sum"></td>
+        </tr>
+</table>
+    <table><tr>
+        <td ><a style="color: white;background-color: #0e9aef" herf="javascript:;" onclick="getIntersection()"> &nbsp;&nbsp;&nbsp;计 算 &nbsp;&nbsp;</a></td>
+        </tr>
+    </table>
+    <h4>路口仿真计算</h4>
+    <table>
+        <tr>
+            <td>序号</td>
+            <td>道路</td>
+            <td>个数</td>
+            <td>摄像头个数</td>
+            <td>规划总数</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>三岔口</td>
+            <td><a id="trident_text" th:text="${message.trident}"></a></td>
+            <td><input id="trident" th:type="text" style="text-align: center"></td>
+            <td id="trident_val"></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>四岔口</td>
+            <td><a id="crossroads_text"th:text="${message.crossroads}"></a></td>
+            <td><input id="crossroads" style="text-align: center" th:type="text"></td>
+            <td id="crossroads_val"></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>五岔口</td>
+            <td><a id="moreroads_text" th:text="${message.moreroads}"></a></td>
+            <td><input id="moreroads" style="text-align: center" th:type="text"></td>
+            <td id="moreroads_val"></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>其他</td>
+            <td><a id="other_text" th:text="${message.other}"></a></td>
+            <td><input id="other" style="text-align: center"th:type="text"></td>
+            <td id="other_val"></td>
+        </tr>
+        <tr>
+            <td>总计</td>
+            <td>全部</td>
+            <td><a th:text="${message.sum}"></a></td>
+            <td></td>
+            <td id="sum"></td>
+        </tr>
+    </table>
+    <table><tr>
+        <td ><a style="color: white;background-color: #0e9aef" herf="javascript:;" onclick="getLine()"> &nbsp;&nbsp;&nbsp;计 算 &nbsp;&nbsp;</a></td>
+    </tr>
+    </table>
+</div>
+<script th:inline="javascript">
+function getIntersection() {
+    var i=0,sum=0;
+    for (var k=0;k<14;k++) {
+        var data = {};
+        if (k == 0) {
+            data = {
+                "metre":$("#sd").val(),
+                "enticlassi": "1140104000",
+                "num":$("#sd_text").val(),
+            };
+       }else if(k == 1){
+            data = {
+                "metre":$("#gd").val(),
+                "enticlassi": "1140103000",
+                "num":$("#gd_text").val(),
+            };
+        }else if(k == 2){
+            data = {
+                "metre":$("#zgd").val(),
+                "enticlassi": "1140303000",
+                "num":$("#zgd_text").val(),
+            };
+        }else if(k==3){
+            data = {
+                "metre":$("#cgd").val(),
+                "enticlassi": "1140304000",
+                "num":$("#cgd_text").val(),
+            };
+        }
+         else if(k==4){
+             data = {
+                 "metre":$("#gsgl").val(),
+                 "enticlassi": "1140102000",
+                 "num":$("#gsgl_text").val(),
+             };
+         }
+         else if(k==5){
+             data = {
+                 "metre":$("#xd").val(),
+                 "enticlassi": "1140105000",
+                 "num":$("#xd_text").val(),
+             };
+         }
+         else if(k==6){
+             data = {
+                 "metre":$("#xcd").val(),
+                 "enticlassi": "1140106000",
+                 "num":$("#xcd_text").val(),
+             };
+         }
+         else if(k==7){
+             data = {
+                 "metre":$("#ksl").val(),
+                 "enticlassi": "1140301000",
+                 "num":$("#ksl_text").val(),
+             };
+         }
+         else if(k==8){
+             data = {
+                 "metre":$("#gjl").val(),
+                 "enticlassi": "1140302000",
+                 "num":$("#gjl_text").val(),
+             };
+         }
+         else if(k==9){
+             data = {
+                 "metre":$("#zl").val(),
+                 "enticlassi": "1140305000",
+                 "num":$("#zl_text").val(),
+             };
+         }
+         else if(k==10){
+             data = {
+                 "metre":$("#nbdl").val(),
+                 "enticlassi": "1140306000",
+                 "num":$("#nbdl_text").val(),
+             };
+         }
+         else if(k==11){
+             data = {
+                 "metre":$("#jgl").val(),
+                 "enticlassi": "1140401000",
+                 "num":$("#jgl_text").val(),
+             };
+         }else if(k==12){
+             data = {
+                 "metre":$("#xcl").val(),
+                 "enticlassi": "1140402000",
+                 "num":$("#xcl_text").val(),
+             };
+         }
+         else if(k==13){
+             data = {
+                 "metre":$("#xl").val(),
+                 "enticlassi": "1140403000",
+                 "num":$("#xl_text").val(),
+             };
+         }
+
+        $.ajax({
+            url: "getPointList",
+            type: "post",
+            data: data,
+            dataType: "json",
+            async:false,  //同步
+            success: function (data) {
+                sum+=data.result.sum;
+                if (i==0) {
+                    $("#sd_val").html(data.result.sum);
+                }else if(i == 1){
+                    $("#gd_val").html(data.result.sum);
+                }else if(i == 2){
+                    $("#zgd_val").html(data.result.sum);
+                }else if(i == 3){
+                    $("#cgd_val").html(data.result.sum);
+                } else if(i == 4){
+                    $("#gsgl_val").html(data.result.sum);
+
+                }else if(i == 5){
+                    $("#xd_val").html(data.result.sum);
+                }else if(i == 6){
+                    $("#xcd_val").html(data.result.sum);
+
+                }else if(i == 7){
+                    $("#ksl_val").html(data.result.sum);
+                    console.log(data);
+                }else if(i == 8){
+                    $("#gjl_val").html(data.result.sum);
+                }else if(i == 9){
+                    $("#zl_val").html(data.result.sum);
+                }else if(i == 10){
+                    $("#nbdl_val").html(data.result.sum);
+
+                }else if(i == 11){
+                    $("#jgl_val").html(data.result.sum);
+                }else if(i == 12){
+                    $("#xcl_val").html(data.result.sum);
+                }else if(i == 13){
+                    $("#xl_val").html(data.result.sum);
+                    $("#line_sum").html(sum);
+                }
+                i++;
+            }
+        })
+    }
+
+
+}
+function getLine() {
+    var trident= $("#trident").val();
+    console.log(trident);
+    var crossroads= $("#crossroads").val();
+    var moreroads= $("#moreroads").val();
+    var other= $("#other").val();
+    if(""==trident){
+        trident=0;
+    }else if(""==crossroads){
+        crossroads=0;
+    }else if(""==moreroads){
+        moreroads=0;
+    }else if(""==other){
+        other=0;
+    }
+    $("#trident_val").html($("#trident_text").text()*trident);
+    $("#crossroads_val").html($("#crossroads_text").text()*crossroads);
+    $("#moreroads_val").html($("#moreroads_text").text()*moreroads);
+    $("#other_val").html($("#other_text").text()*other);
+     $("#sum").html($("#trident_text").text()*trident+$("#crossroads_text").text()*crossroads+$("#moreroads_text").text()*moreroads+$("#other_text").text()*other);
+}
+</script>
+</body>
+
+</html>
