@@ -29,7 +29,7 @@ public class RoadScopeDto {
     @NotNull(message = "距离不能为空")
     private Integer distance;
 
-    private Object list;
+    private String list;
 
 }
 
