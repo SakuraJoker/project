@@ -45,7 +45,7 @@ public interface RoadPgrService {
      * 统计总数
      * @return
      */
-    Integer selectTotal();
+    Integer selectTotal(Map map);
 
     /**
      * 求两geometry相交部分

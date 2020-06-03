@@ -41,8 +41,8 @@ public class RoadPgrServiceImpl implements RoadPgrService {
     }
 
     @Override
-    public Integer selectTotal() {
-        return roadPointPgrMapper.selectTotal();
+    public Integer selectTotal(Map map) {
+        return roadPointPgrMapper.selectTotal(map);
     }
 
     @Override

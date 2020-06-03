@@ -26,7 +26,7 @@ public interface RoadPointPgrMapper {
 
     String selectSTIntersects(Map map);
 
-    Integer selectTotal();
+    Integer selectTotal(Map map);
 
     String selectSTasgeojson(Map map);
 

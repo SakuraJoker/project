@@ -16,4 +16,6 @@ public class IntersectionPoint{
     private String   shapeLeng;
     private String intersectionType;
     private String area;
+    private int pointNum;
+    private String otherNum;
 }

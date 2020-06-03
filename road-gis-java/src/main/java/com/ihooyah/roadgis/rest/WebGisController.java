@@ -66,7 +66,7 @@ public class WebGisController{
     @ResponseBody
     public RespInfo selectSTIntersects(@RequestBody Map map) {
         TreeSet<String> list=new TreeSet<>();
-       int sum=roadPgrService.selectTotal();
+       int sum=roadPgrService.selectTotal(map);
         for (int i=1;i<sum;i++) {
             for (int j=1;j<sum;j++) {
                 map.put("line",i);
@@ -158,6 +158,9 @@ public class WebGisController{
         if (StringUtils.isNotEmpty(pointReq.getEnticlassi())){
             map.put("enticlassi",pointReq.getEnticlassi());
         }
+        if (StringUtils.isNotEmpty(pointReq.getArea())){
+            map.put("area", pointReq.getArea());
+        }
         List<Map> list=roadPgrService.selectGisLineList(map);
         List<Object> objectList=new ArrayList<>();
         list.forEach(item->{
@@ -233,11 +236,10 @@ public class WebGisController{
         Map<String,Object> map=new HashMap<>();
         IntersectionPoint intersectionPoint=new IntersectionPoint();
         if (pointReq!=null&&StringUtils.isNotEmpty(pointReq.getArea())){
-            intersectionPoint.setArea(intersectionPoint.getArea());
+            intersectionPoint.setArea(pointReq.getArea());
+             map.put("area",pointReq.getArea());
         }
-        List<IntersectionPoint> list=roadPgrService.selectIntersectionPointGroupByLngLat(intersectionPoint);
-        map.put("intersectionTotal",list.size());//路口总数
-        int sum=roadPgrService.selectTotal();
+        int sum=roadPgrService.selectTotal(map);
         map.put("roadTotal",sum);//道路条数
         double zkm = roadPgrService.getShapeLenght(map);
         zkm/=1000;
@@ -316,6 +318,7 @@ public class WebGisController{
         km+=xl;
         map.put("km",km/1000);//道路总数
 
+        List<IntersectionPoint> list=roadPgrService.selectIntersectionPointGroupByLngLat(intersectionPoint);
         int moreroads=0;
         //十字路口
         int crossroads=0;
@@ -324,32 +327,32 @@ public class WebGisController{
         //L型路口
         int cross=0;
         int other=0;
-        for (IntersectionPoint item : list) {
-            int num = roadPgrService.selectCountByLntLat(item);
-            if (num == 5) {
-                item.setIntersectionType(IntersectionType.MOREROADS.getType());
-                moreroads++;
-            } else if (num == 4) {
-                item.setIntersectionType(IntersectionType.CROSS.getType());
-                crossroads++;
-            } else if (num == 3) {
-                item.setIntersectionType(IntersectionType.T.getType());
-                trident++;
-            } else if (num == 2) {
-                item.setIntersectionType(IntersectionType.OTHER.getType());
-                cross++;
-            }else {
-                item.setIntersectionType(IntersectionType.OTHER.getType());
-                other++;
-            }
-        }
+        //道路末端
+        intersectionPoint.setPointNum(1);
+        List<IntersectionPoint> oneList=roadPgrService.selectIntersectionPointGroupByLngLat(intersectionPoint);
+       // intersectionPoint.setPointNum("2");
+       // List<IntersectionPoint> crossList=roadPgrService.selectIntersectionPointGroupByLngLat(intersectionPoint);
+        intersectionPoint.setPointNum(3);
+        List<IntersectionPoint> tridentList=roadPgrService.selectIntersectionPointGroupByLngLat(intersectionPoint);
+        intersectionPoint.setPointNum(4);
+        List<IntersectionPoint> crossroadsList=roadPgrService.selectIntersectionPointGroupByLngLat(intersectionPoint);
+        intersectionPoint.setPointNum(5);
+        List<IntersectionPoint> moreroadsList=roadPgrService.selectIntersectionPointGroupByLngLat(intersectionPoint);
+        intersectionPoint.setPointNum(0);
+        intersectionPoint.setOtherNum("other");
+        List<IntersectionPoint> otherList=roadPgrService.selectIntersectionPointGroupByLngLat(intersectionPoint);
+
+        map.put("intersectionTotal",list.size()-oneList.size());//路口总数
         map.put("list",list);
-        map.put("moreroads",moreroads);
-        map.put("crossroads",crossroads);
-        map.put("trident",trident);
-        //   map.put("cross",cross);
-        map.put("other",other+cross);
-        map.put("sum",moreroads+crossroads+trident+other+cross);
+        map.put("moreroads",moreroadsList.size());
+        map.put("moreroadsList",moreroadsList);
+        map.put("crossroads",crossroadsList.size());
+        map.put("crossroadsList",crossroadsList);
+        map.put("trident",tridentList.size());
+        map.put("tridentList",tridentList);
+        map.put("other",otherList.size());
+        map.put("otherList",otherList);
+        map.put("sum",list.size()-oneList.size());
 
         return RespInfo.mobiSuccess(map);
 
@@ -477,6 +480,9 @@ public class WebGisController{
             Map map = new HashMap();
            // 国道 1140103000
             map.put("enticlassi", pointReq.getEnticlassi());
+            if (StringUtils.isNotEmpty(pointReq.getArea())){
+                map.put("area", pointReq.getArea());
+            }
             List<Map> list = roadPgrService.selectGisLineList(map);
             List<Object> objectList = new ArrayList<>();
             list.forEach(item -> {
