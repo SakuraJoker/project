@@ -344,12 +344,16 @@ public class WebGisController{
 
         map.put("intersectionTotal",list.size()-oneList.size());//路口总数
         map.put("list",list);
+        //五叉路口
         map.put("moreroads",moreroadsList.size());
         map.put("moreroadsList",moreroadsList);
+        //四叉路口
         map.put("crossroads",crossroadsList.size());
         map.put("crossroadsList",crossroadsList);
+        //三叉路口
         map.put("trident",tridentList.size());
         map.put("tridentList",tridentList);
+        //其他路口
         map.put("other",otherList.size());
         map.put("otherList",otherList);
         map.put("sum",list.size()-oneList.size());
