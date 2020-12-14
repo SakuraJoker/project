@@ -128,7 +128,7 @@ WHERE rc.gid = dd.edge
     <select id="selectIntersectGeography" resultType="map" parameterType="com.ihooyah.roadgis.dto.RoadScopeDto">
       SELECT t.gid,st_asgeojson (t.geom) as geom,t.shape_leng  FROM hooya_gis_line t WHERE
 	ST_DWithin (ST_GeomFromText ( 'POINT(${lng}  ${lat})', 4326 ) :: geography, T.geom :: geography,#{distance},false )
-      GROUP BY t.gid;
+      GROUP BY t.gid
     </select>
 
     <select id="STDistance" resultType="float" parameterType="map">

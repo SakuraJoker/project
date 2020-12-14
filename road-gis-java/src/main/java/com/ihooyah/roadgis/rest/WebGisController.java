@@ -172,7 +172,7 @@ public class WebGisController{
            //MULTILINESTRING((118.78148007175 32.0364405110896,118.781514779286 32.0365378896807))
            String linestring=roadPgrService.selectSTastext(item);
            linestring=linestring.substring(linestring.indexOf("(")+2,linestring.length()-2);
-           linestring=linestring.replace("(","").replace(")","");
+           linestring=linestring.replace("(","").replace(")","").replace("0 -1.79769e+308","");
            //拼凑所需参数  LINESTRING(118.78148007175 32.0364405110896,118.781514779286 32.0365378896807)
            linestring="'"+"LINESTRING("+linestring+")'";
            Map hashMap=new HashMap();

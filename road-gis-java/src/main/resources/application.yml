@@ -83,6 +83,6 @@ server:
 
 
 # 日志配置
-#logging:
-  #level:
-    #com.ihooyah.roadgis: debug
+logging:
+  level:
+    com.ihooyah.roadgis: debug
